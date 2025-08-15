@@ -1,20 +1,31 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 
-export default function Navbar() {
+export default function Navbar({ className = '' }) {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeHover, setActiveHover] = useState('');
+  const [mounted, setMounted] = useState(false);
+  const [progress, setProgress] = useState(0);
   const location = useLocation();
 
   useEffect(() => {
-    const handleScroll = () => {
-      const isScrolled = window.scrollY > 50;
-      setScrolled(isScrolled);
+    const calcProgress = () => {
+      const top = window.scrollY || 0;
+      const h = document.documentElement.scrollHeight - window.innerHeight;
+      const pct = h > 0 ? Math.min(100, Math.round((top / h) * 100)) : 0;
+      setProgress(pct);
+      setScrolled(top > 50);
     };
+    calcProgress();
+    const onScroll = () => calcProgress();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
-    window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+  useEffect(() => {
+    // Trigger entrance animation
+    const t = setTimeout(() => setMounted(true), 10);
+    return () => clearTimeout(t);
   }, []);
 
   const navItems = [
@@ -24,186 +35,165 @@ export default function Navbar() {
     { name: 'Community', path: '/community', icon: '👥' }
   ];
 
-  const isActive = (path) => location.pathname === path;
+  // Active when the path matches exactly or is a nested route (e.g., /tournaments/123)
+  const isActive = (path) =>
+    location.pathname === path || location.pathname.startsWith(path + '/');
+
+  // Close mobile menu on route change
+  useEffect(() => {
+    if (isOpen) setIsOpen(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [location.pathname]);
+
+  // Prevent body scroll when mobile menu is open
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = prev || '';
+    }
+    return () => {
+      document.body.style.overflow = prev || '';
+    };
+  }, [isOpen]);
 
   return (
     <>
-      {/* Backdrop blur overlay when mobile menu is open */}
+      {/* Scroll progress bar */}
+      <div
+        className="fixed left-0 top-0 h-[3px] bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 z-[60]"
+        style={{ width: `${progress}%`, transition: 'width 150ms ease-out' }}
+        aria-hidden="true"
+      />
       {isOpen && (
-        <div 
-          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-40 lg:hidden"
+        <div
+          className="fixed inset-0 bg-black/30 backdrop-blur-sm z-40 lg:hidden"
           onClick={() => setIsOpen(false)}
         />
       )}
 
-      <nav className={`fixed inset-x-4 top-4 z-50 transition-all duration-500 ${
-        scrolled ? 'inset-x-6 top-6' : ''
-      }`}>
+      <nav
+        className={`fixed left-0 right-0 top-0 z-50 transition-all duration-500 ${
+          scrolled ? 'mx-4 mt-4' : ''
+        } ${className}`}
+      >
         <div className="max-w-7xl mx-auto">
-          <div className={`flex items-center justify-between px-6 py-4 transition-all duration-500 ${
-            scrolled 
-              ? 'backdrop-blur-xl bg-black/60 border border-purple-500/20 shadow-2xl shadow-purple-500/10' 
-              : 'backdrop-blur-md bg-black/20 border border-white/10'
-          } rounded-2xl`}>
-            
-            {/* Enhanced Logo and Brand */}
-            <div className="flex-shrink-0 flex items-center">
-              <Link to="/" className="flex items-center gap-3 group">
-                <div className="relative">
-                  {/* Animated logo background */}
-                  <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity duration-300" />
-                  <div className="relative w-12 h-12 rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <svg className="h-7 w-7 text-white group-hover:rotate-12 transition-transform duration-300" viewBox="0 0 24 24" fill="currentColor">
-                      <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h18v8zM6 15h2v-2h2v-2H8V9H6v2H4v2h2z"/>
-                    </svg>
-                  </div>
+          <div
+            className={`relative group flex items-center justify-between transition-all duration-500 ${
+              scrolled
+                ? 'px-5 py-2 backdrop-blur-2xl bg-black/40 supports-[backdrop-filter]:bg-black/30 border border-white/10 rounded-2xl shadow-lg'
+                : 'px-8 py-4 bg-transparent'
+            } ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2'}`}
+          >
+            {scrolled && (
+              <div className="pointer-events-none absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/10 via-pink-500/10 to-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+            )}
+            <div className="flex items-center gap-3">
+              <Link to="/" className="flex items-center gap-3 transition-transform hover:scale-[1.02]">
+                <div className={`${scrolled ? 'w-10 h-10' : 'w-14 h-14'} rounded-full bg-gradient-to-br from-purple-600 via-pink-600 to-blue-600 flex items-center justify-center transition-all` }>
+                  <svg className={`${scrolled ? 'h-6 w-6' : 'h-8 w-8'} text-white`} viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h18v8zM6 15h2v-2h2v-2H8V9H6v2H4v2h2z" />
+                  </svg>
                 </div>
-                <div className="flex flex-col">
-                  <span className="text-xl font-black bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent group-hover:from-purple-400 group-hover:to-pink-400 transition-all duration-300">
-                    GameZone
-                  </span>
-                  <span className="text-xs text-gray-400 font-semibold tracking-wider">
-                    ARENA
-                  </span>
+                <div className="flex flex-col leading-none">
+                  {/* Full name on large screens */}
+                  <span className={`hidden lg:inline font-semibold tracking-normal ${scrolled ? 'text-lg' : 'text-2xl'} transition-all`}>Code Battle Arena</span>
+                  {/* Abbreviated brand on small/medium screens */}
+                  <span className={`lg:hidden font-semibold tracking-normal ${scrolled ? 'text-lg' : 'text-2xl'} transition-all`}>CBA</span>
                 </div>
               </Link>
             </div>
 
-            {/* Enhanced Desktop Navigation */}
-            <div className="hidden lg:flex lg:items-center lg:space-x-1">
-              {navItems.map((item) => (
+    <div className="hidden lg:flex items-center gap-1">
+              {navItems.map((item, index) => (
                 <Link
                   key={item.name}
                   to={item.path}
-                  onMouseEnter={() => setActiveHover(item.name)}
-                  onMouseLeave={() => setActiveHover('')}
-                  className={`relative px-4 py-2 rounded-xl text-sm font-semibold transition-all duration-300 transform hover:-translate-y-0.5 ${
+                  aria-current={isActive(item.path) ? 'page' : undefined}
+                  className={`group relative overflow-hidden rounded-xl font-semibold transform transition-all ${
+                    scrolled ? 'px-4 py-1.5 text-sm' : 'px-6 py-2.5 text-lg'
+                  } hover:-translate-y-0.5 ${
                     isActive(item.path)
-                      ? 'text-white bg-gradient-to-r from-purple-600/30 to-pink-600/30 border border-purple-500/50'
+                      ? 'text-white bg-white/10 border border-white/20'
                       : 'text-gray-300 hover:text-white hover:bg-white/5'
-                  }`}
+                  } ${mounted ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}`}
+                  style={{ transitionDelay: mounted ? `${index * 40}ms` : undefined }}
                 >
-                  <span className="flex items-center gap-2">
-                    <span className="text-base">{item.icon}</span>
-                    {item.name}
-                  </span>
-                  
-                  {/* Hover glow effect */}
-                  {activeHover === item.name && (
-                    <div className="absolute -inset-1 bg-gradient-to-r from-purple-600/20 to-pink-600/20 rounded-xl blur opacity-60" />
-                  )}
-                  
-                  {/* Active indicator */}
-                  {isActive(item.path) && (
-                    <div className="absolute -bottom-1 left-1/2 transform -translate-x-1/2 w-1 h-1 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full" />
-                  )}
+                  <span className={`mr-2 ${scrolled ? 'text-sm' : 'text-base'}`}>{item.icon}</span>
+                  {item.name}
+                  <span
+                    className={`pointer-events-none absolute left-3 right-3 bottom-1 h-px origin-left scale-x-0 bg-gradient-to-r from-purple-400/80 via-pink-400/80 to-blue-400/80 bg-[length:200%_100%] transition-[transform] duration-300 ${
+                      isActive(item.path) ? 'scale-x-100 animate-[gradient-x_1.2s_linear_infinite]' : 'group-hover:scale-x-100 group-hover:animate-[gradient-x_1.2s_linear_infinite]'
+                    }`}
+                  />
                 </Link>
               ))}
             </div>
 
-            {/* Enhanced Action Buttons */}
             <div className="flex items-center gap-3">
-              {/* Search button */}
-              <button className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all duration-300 hover:scale-110">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-              </button>
-
-              {/* Notifications */}
-              <button className="hidden sm:flex items-center justify-center w-10 h-10 rounded-full bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white transition-all duration-300 hover:scale-110 relative">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 17h5l-5-5V9c0-3.866-3.134-7-7-7s-7 3.134-7 7v3l-5 5h5m7 0v1a3 3 0 01-6 0v-1m6 0H9" />
-                </svg>
-                <div className="absolute -top-1 -right-1 w-3 h-3 bg-gradient-to-r from-red-500 to-pink-500 rounded-full border-2 border-black animate-pulse" />
-              </button>
-
-              {/* Enhanced Sign In button */}
-              <Link 
-                to="/login" 
-                className="group relative hidden sm:inline-flex items-center px-6 py-2.5 rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white font-bold shadow-2xl hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105 overflow-hidden"
+              <Link
+                to="/login"
+                className={`hidden sm:inline-flex items-center rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white font-semibold hover:opacity-95 ${scrolled ? 'px-4 py-2 text-sm' : 'px-6 py-3 text-base'}`}
               >
-                <span className="relative z-10 flex items-center gap-2">
-                  <span>Sign In</span>
-                  <svg className="w-4 h-4 group-hover:translate-x-0.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                  </svg>
-                </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity duration-300" />
+                Sign In
               </Link>
-
-              {/* Enhanced Mobile menu button */}
-              <div className="lg:hidden">
-                <button
-                  onClick={() => setIsOpen(!isOpen)}
-                  className="relative inline-flex items-center justify-center p-2.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition-all duration-300 hover:scale-110"
-                >
-                  <span className="sr-only">Open main menu</span>
-                  <div className="relative w-6 h-6">
-                    <span className={`absolute inset-0 transition-all duration-300 ${!isOpen ? 'rotate-0 opacity-100' : 'rotate-180 opacity-0'}`}>
-                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                      </svg>
-                    </span>
-                    <span className={`absolute inset-0 transition-all duration-300 ${isOpen ? 'rotate-0 opacity-100' : 'rotate-180 opacity-0'}`}>
-                      <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                      </svg>
-                    </span>
-                  </div>
-                </button>
-              </div>
+              <button
+                onClick={() => setIsOpen((v) => !v)}
+                className={`lg:hidden inline-flex items-center justify-center rounded-lg bg-white/5 text-gray-200 hover:bg-white/10 ${scrolled ? 'p-2' : 'p-2.5'}`}
+                aria-expanded={isOpen}
+                aria-label="Toggle navigation menu"
+                aria-controls="mobile-nav"
+              >
+                <svg className={`${scrolled ? 'w-5 h-5' : 'w-6 h-6'}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  {isOpen ? (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                  ) : (
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
+                  )}
+                </svg>
+              </button>
             </div>
           </div>
         </div>
 
-        {/* Enhanced Mobile Navigation */}
-        <div className={`lg:hidden mt-3 transition-all duration-500 transform ${
-          isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-95 -translate-y-4 pointer-events-none'
-        }`}>
-          <div className="mx-4 backdrop-blur-xl bg-black/80 border border-purple-500/20 rounded-2xl p-6 shadow-2xl shadow-purple-500/10">
-            {/* Mobile nav items */}
-            <div className="space-y-3">
+        <div
+          className={`lg:hidden mt-3 transition-all duration-300 ${
+            isOpen ? 'opacity-100 translate-y-0 scale-100' : 'opacity-0 -translate-y-2 scale-95 pointer-events-none'
+          }`}
+        >
+          <div id="mobile-nav" className="mx-4 rounded-2xl border border-white/10 bg-black/80 backdrop-blur-xl p-4">
+            <div className="space-y-2">
               {navItems.map((item, index) => (
                 <Link
                   key={item.name}
                   to={item.path}
                   onClick={() => setIsOpen(false)}
-                  className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 ${
+                  aria-current={isActive(item.path) ? 'page' : undefined}
+                  className={`group relative overflow-hidden flex items-center gap-3 px-4 py-3 rounded-xl transform transition-all ${
                     isActive(item.path)
-                      ? 'bg-gradient-to-r from-purple-600/30 to-pink-600/30 border border-purple-500/50 text-white'
+                      ? 'text-white bg-white/10 border border-white/20'
                       : 'text-gray-300 hover:text-white hover:bg-white/5'
-                  }`}
-                  style={{ animationDelay: `${index * 50}ms` }}
+                  } ${isOpen ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-1'}`}
+                  style={{ transitionDelay: isOpen ? `${index * 40}ms` : undefined }}
                 >
                   <span className="text-lg">{item.icon}</span>
                   <span className="font-semibold">{item.name}</span>
-                  {isActive(item.path) && (
-                    <div className="ml-auto w-2 h-2 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full" />
-                  )}
+                  <span
+                    className={`pointer-events-none absolute left-4 right-4 bottom-1 h-px origin-left scale-x-0 bg-gradient-to-r from-purple-400/80 via-pink-400/80 to-blue-400/80 bg-[length:200%_100%] transition-[transform] duration-300 ${
+                      isActive(item.path) ? 'scale-x-100 animate-[gradient-x_1.2s_linear_infinite]' : 'group-hover:scale-x-100 group-hover:animate-[gradient-x_1.2s_linear_infinite]'
+                    }`}
+                  />
                 </Link>
               ))}
             </div>
-            
-            {/* Mobile action buttons */}
-            <div className="mt-6 pt-6 border-t border-gray-700/50 space-y-3">
-              <button className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white transition-all duration-300">
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                </svg>
-                Search
-              </button>
-              
-              <Link 
-                to="/login" 
+            <div className="mt-4 pt-4 border-t border-white/10">
+              <Link
+                to="/login"
                 onClick={() => setIsOpen(false)}
-                className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white font-bold shadow-lg hover:shadow-purple-500/30 transition-all duration-300"
+                className="w-full inline-flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 text-white font-semibold"
               >
                 Sign In
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
-                </svg>
               </Link>
             </div>
           </div>

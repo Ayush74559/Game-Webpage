@@ -1,8 +1,8 @@
-# 🎮 GameZone - React Gaming Website
+# 🎮 Code Battle Arena - React Gaming Website
 
 A modern, responsive gaming website built with React 18, Vite, and Tailwind CSS. Features a sleek gaming aesthetic with smooth animations and mobile-first design.
 
-![GameZone Preview](https://img.shields.io/badge/React-18.x-blue?style=for-the-badge&logo=react)
+![Code Battle Arena Preview](https://img.shields.io/badge/React-18.x-blue?style=for-the-badge&logo=react)
 ![Vite](https://img.shields.io/badge/Vite-7.x-646CFF?style=for-the-badge&logo=vite)
 ![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3.x-06B6D4?style=for-the-badge&logo=tailwindcss)
 
@@ -57,7 +57,7 @@ src/
 1. Clone the repository:
 ```bash
 git clone <repository-url>
-cd react-app
+cd <repo-folder>
 ```
 
 2. Install dependencies:
@@ -71,6 +71,22 @@ npm run dev
 ```
 
 4. Open your browser and navigate to `http://localhost:5173`
+
+### Backend (API) — optional
+
+The project includes a simple Express server for demo APIs.
+
+```bash
+cd server
+npm install
+npm run dev
+```
+
+By default, it serves on http://localhost:5174 with routes like:
+
+- GET /health
+- GET /api/tournaments
+- GET /api/leaderboard
 
 ## 🎮 Available Scripts
 

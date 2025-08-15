@@ -1,15 +1,30 @@
 import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 
 export default function Tournaments() {
-  const tournaments = [
-    { id: 1, name: 'Autumn Clash', date: 'Sep 21, 2025', prize: '$5,000', entrants: 128, img: 'https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=1200&q=80' },
-    { id: 2, name: 'Neon Arena', date: 'Oct 05, 2025', prize: '$3,000', entrants: 64, img: 'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?auto=format&fit=crop&w=1200&q=80' },
-    { id: 3, name: 'Speed Cup', date: 'Nov 12, 2025', prize: '$7,500', entrants: 256, img: 'https://images.unsplash.com/photo-1549924231-f129b911e442?auto=format&fit=crop&w=1200&q=80' },
-    { id: 4, name: 'Cyber Siege Invitational', date: 'Dec 01, 2025', prize: '$10,000', entrants: 200, img: 'https://images.unsplash.com/photo-1605902711622-cfb43c44367e?auto=format&fit=crop&w=1200&q=80' },
-    { id: 5, name: 'Arena Royale Cup', date: 'Jan 15, 2026', prize: '$12,000', entrants: 512, img: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80' },
-  ];
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [tournaments, setTournaments] = useState([]);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        setLoading(true);
+        const res = await fetch('/api/tournaments');
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const data = await res.json();
+        if (!cancelled) setTournaments(data.items || []);
+      } catch (e) {
+        if (!cancelled) setError('Failed to load tournaments');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#071428] via-[#071327] to-black text-white">
@@ -49,21 +64,31 @@ export default function Tournaments() {
           {/* List */}
           <div className="lg:col-span-3">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {tournaments.map((t) => (
+              {loading && (
+                <div className="col-span-full text-center text-gray-400 py-8">Loading tournaments…</div>
+              )}
+              {error && !loading && (
+                <div className="col-span-full text-center text-red-400 py-8">{error}</div>
+              )}
+              {!loading && !error && tournaments.length === 0 && (
+                <div className="col-span-full text-center text-gray-400 py-8">No tournaments available.</div>
+              )}
+              {!loading && !error && tournaments.map((t) => (
                 <article key={t.id} className="group bg-gradient-to-br from-gray-900/60 to-gray-800/20 rounded-2xl overflow-hidden shadow-2xl transition-transform hover:-translate-y-2">
                   <div className="relative h-44 w-full overflow-hidden">
-                    <img src={t.img} alt={t.name} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+                    {/* Placeholder gradient since API doesn't serve images */}
+                    <div className="w-full h-full bg-gradient-to-r from-purple-600/40 via-pink-600/30 to-blue-600/40" />
                     <div className="absolute left-4 top-4 bg-indigo-600/80 text-xs text-white px-2 py-1 rounded-full">{t.date}</div>
                   </div>
                   <div className="p-4">
                     <div className="flex items-start justify-between">
                       <div>
                         <h3 className="text-lg font-semibold">{t.name}</h3>
-                        <p className="text-sm text-gray-400 mt-1">Prize: <span className="text-white font-bold">{t.prize}</span></p>
+                        <p className="text-sm text-gray-400 mt-1">Prize: <span className="text-white font-bold">${t.prize.toLocaleString()}</span></p>
                       </div>
                       <div className="text-right">
-                        <div className="text-sm text-indigo-300">Entrants</div>
-                        <div className="text-xl font-bold">{t.entrants}</div>
+                        <div className="text-sm text-indigo-300">Teams</div>
+                        <div className="text-xl font-bold">{t.teams}</div>
                       </div>
                     </div>
 

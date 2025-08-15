@@ -4,6 +4,8 @@ import Signup from './pages/Signup'
 import Dashboard from './pages/Dashboard'
 import LandingPage from './pages/LandingPage'
 import Tournaments from './pages/Tournaments'
+import Leaderboard from './pages/Leaderboard'
+import Community from './pages/Community'
 import ProtectedRoute from './components/ProtectedRoute'
 
 function App() {
@@ -15,6 +17,8 @@ function App() {
   <Route path="/login" element={<Login />} />
   <Route path="/signup" element={<Signup />} />
   <Route path="/tournaments" element={<Tournaments />} />
+  <Route path="/leaderboard" element={<Leaderboard />} />
+  <Route path="/community" element={<Community />} />
 
         {/* Protected routes */}
         <Route

@@ -2,99 +2,51 @@ import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import hero from '../assets/gaming-hero.svg';
-import controller from '../assets/controller.svg';
 
 export default function LandingPage() {
   const [showTop, setShowTop] = useState(false);
-  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   useEffect(() => {
     const onScroll = () => setShowTop(window.scrollY > 300);
-    const onMouseMove = (e) => {
-      setMousePosition({ x: e.clientX, y: e.clientY });
-    };
-    
     window.addEventListener('scroll', onScroll, { passive: true });
-    window.addEventListener('mousemove', onMouseMove, { passive: true });
-    
     return () => {
       window.removeEventListener('scroll', onScroll);
-      window.removeEventListener('mousemove', onMouseMove);
     };
   }, []);
 
   return (
-    <div className="min-h-screen bg-black text-white overflow-hidden relative">
-      {/* Dynamic mouse glow effect */}
-      <div 
-        className="fixed pointer-events-none z-0 w-80 h-80 rounded-full opacity-20 blur-3xl transition-all duration-300"
-        style={{
-          background: 'radial-gradient(circle, #8b5cf6 0%, #3b82f6 50%, transparent 70%)',
-          left: mousePosition.x - 160,
-          top: mousePosition.y - 160,
-        }}
-      />
-      
-      {/* Animated grid background */}
-      <div className="fixed inset-0 z-0">
-        <div className="absolute inset-0 bg-[linear-gradient(rgba(139,92,246,0.03)_1px,transparent_1px),linear-gradient(90deg,rgba(139,92,246,0.03)_1px,transparent_1px)] bg-[size:50px_50px] [mask-image:radial-gradient(ellipse_at_center,black_40%,transparent_70%)]" />
-      </div>
+  <div className="min-h-screen bg-black text-white overflow-hidden relative pt-24">
+  {/* Simplified background handled per-section */}
 
       <Navbar className="relative z-40" />
 
       {/* Hero Section */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
-        {/* Enhanced floating orbs with more variety */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-20 left-10 w-32 h-32 rounded-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 blur-xl animate-pulse" />
-          <div className="absolute top-40 right-20 w-24 h-24 rounded-full bg-gradient-to-r from-blue-500/20 to-cyan-500/20 blur-lg animate-bounce" style={{ animationDuration: '3s' }} />
-          <div className="absolute bottom-32 left-1/4 w-20 h-20 rounded-full bg-gradient-to-r from-indigo-500/20 to-purple-500/20 blur-lg animate-pulse" style={{ animationDelay: '1s' }} />
-          <div className="absolute top-1/3 left-1/3 w-16 h-16 rounded-full bg-gradient-to-r from-pink-500/15 to-orange-500/15 blur-lg animate-float" style={{ animationDelay: '2s' }} />
-          <div className="absolute bottom-1/4 right-1/3 w-28 h-28 rounded-full bg-gradient-to-r from-green-500/15 to-blue-500/15 blur-xl animate-pulse" style={{ animationDelay: '0.5s' }} />
-        </div>
-
-        {/* Animated particles */}
-        <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {Array.from({ length: 20 }).map((_, i) => (
-            <div
-              key={i}
-              className="absolute w-1 h-1 bg-gradient-to-r from-purple-400 to-pink-400 rounded-full animate-twinkle opacity-70"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 3}s`,
-                animationDuration: `${2 + Math.random() * 2}s`
-              }}
-            />
-          ))}
-        </div>
+        {/* Simple game-themed gradient with dotted pattern */}
+        <div className="absolute inset-0 z-0 bg-gradient-to-b from-gray-950 via-black to-gray-950" />
+        <div
+          className="absolute inset-0 z-0 pointer-events-none opacity-10"
+          style={{ backgroundImage: 'radial-gradient(rgba(255,255,255,0.08) 1px, transparent 1px)', backgroundSize: '24px 24px' }}
+        />
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 text-center">
-          {/* Main heading with enhanced effects */}
-          <div className="relative mb-8">
-            <h1 className="text-7xl md:text-9xl font-black tracking-tight">
-              <span className="block bg-gradient-to-r from-white via-purple-200 to-white bg-clip-text text-transparent relative animate-glow">
-                GAME
-                <span className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-lg blur-2xl opacity-20 animate-pulse" />
-              </span>
-              <span className="block bg-gradient-to-r from-purple-400 via-pink-400 to-blue-400 bg-clip-text text-transparent mt-2 relative animate-glow" style={{ animationDelay: '0.5s' }}>
-                ZONE
-                <span className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-lg blur-xl opacity-30 animate-pulse" style={{ animationDelay: '0.5s' }} />
-              </span>
+          {/* Hero content */}
+          <div className="relative mb-10 flex flex-col items-center gap-6">
+            <h1 className="text-6xl md:text-8xl font-black bg-gradient-to-r from-emerald-400 to-cyan-400 bg-clip-text text-transparent">
+              Code Battle Arena
             </h1>
-            
-            {/* Subtitle with typewriter effect */}
-            <div className="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-sm font-semibold text-purple-400 tracking-wider animate-pulse">
-              ⚡ ULTIMATE GAMING EXPERIENCE ⚡
-            </div>
+            <p className="max-w-3xl mx-auto text-base md:text-lg text-gray-300">
+              Fast matchmaking, adaptive ranks, strong anti-cheat, and smart highlights — built for speed and fairness.
+            </p>
+
+            {/* Feature badges removed for simpler look */}
           </div>
 
           {/* Enhanced subtitle */}
           <p className="text-xl md:text-2xl text-gray-300 max-w-4xl mx-auto mb-12 leading-relaxed">
-            Enter the ultimate gaming arena where legends are born. 
+            Elevate your play with fast matchmaking, realtime coaching insights, and personalized tournaments.
             <span className="block mt-2 bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent font-semibold">
-              Compete, Conquer, Champion.
+              Smarter games. Faster wins. Zero cheats.
             </span>
           </p>
 
@@ -105,16 +57,13 @@ export default function LandingPage() {
               className="group relative px-12 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-full text-white font-bold text-lg shadow-2xl hover:shadow-purple-500/25 transition-all duration-300 hover:scale-105 overflow-hidden"
             >
               <span className="relative z-10 flex items-center gap-2">
-                <span>Start Your Journey</span>
+                <span>Start Playing</span>
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-full blur opacity-30 group-hover:opacity-50 transition-opacity duration-300" />
-              
-              {/* Button glow effect */}
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 opacity-20 blur-xl group-hover:opacity-40 transition-opacity duration-300 animate-pulse" />
+              {/* Glow overlays removed */}
             </Link>
             
             <Link 
@@ -122,7 +71,7 @@ export default function LandingPage() {
               className="group px-12 py-4 border-2 border-purple-500/50 rounded-full text-purple-300 font-semibold text-lg hover:bg-purple-500/10 transition-all duration-300 hover:scale-105 hover:border-purple-400 relative overflow-hidden"
             >
               <span className="flex items-center gap-2 relative z-10">
-                Watch Tournaments
+                Explore Tournaments
                 <svg className="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
@@ -163,17 +112,11 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Enhanced scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-2">
-          <span className="text-xs text-gray-400 font-semibold tracking-wider">SCROLL TO EXPLORE</span>
-          <svg className="w-6 h-8 text-purple-400 animate-bounce" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 14l-7 7m0 0l-7-7m7 7V3" />
-          </svg>
-        </div>
+  {/* Scroll indicator removed */}
       </section>
 
-      {/* Featured Games Section - Redesigned */}
-      <section className="relative py-24 bg-gradient-to-b from-transparent to-gray-900/20">
+  {/* Featured Games Section - Redesigned */}
+  <section id="featured-games" className="relative py-24 bg-gradient-to-b from-transparent to-gray-900/20">
         <div className="max-w-7xl mx-auto px-6">
           {/* Section header */}
           <div className="text-center mb-16">
@@ -280,7 +223,7 @@ export default function LandingPage() {
             <h2 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent mb-4">
               GAME FEATURES
             </h2>
-            <p className="text-xl text-gray-400">Why millions choose GameZone Arena</p>
+            <p className="text-xl text-gray-400">Why millions choose Code Battle Arena</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
@@ -371,10 +314,10 @@ export default function LandingPage() {
             <p className="text-gray-400 mb-6">Experience all features with a free account</p>
             <Link 
               to="/signup"
-              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-full text-white font-bold shadow-xl hover:shadow-purple-500/30 transition-all duration-300 hover:scale-105"
+              className="group relative inline-flex items-center gap-2 rounded-full p-[2px] bg-[linear-gradient(90deg,theme(colors.purple.500),theme(colors.pink.500),theme(colors.blue.500))] bg-[length:200%_100%] bg-[position:0%_0%] transition-[background-position,transform] duration-700 hover:bg-[position:100%_0] hover:scale-105"
             >
-              <span>Start Free Trial</span>
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <span className="rounded-full px-8 py-4 bg-transparent text-white font-bold">Start Free Trial</span>
+              <svg className="w-5 h-5 transition-transform duration-300 group-hover:translate-x-1 group-hover:rotate-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
@@ -463,7 +406,7 @@ export default function LandingPage() {
 
             {/* Upcoming Tournaments */}
             {[
-              { name: 'Neon Arena', date: 'Oct 15, 2025', prize: '$25K', teams: 64, status: 'Open' },
+              { name: 'Neon Circuit', date: 'Oct 15, 2025', prize: '$25K', teams: 64, status: 'Open' },
               { name: 'Speed Circuit', date: 'Nov 02, 2025', prize: '$15K', teams: 32, status: 'Filling Fast' }
             ].map((tournament, index) => (
               <div key={tournament.name} className="group relative">
@@ -513,7 +456,7 @@ export default function LandingPage() {
               <h2 className="text-5xl md:text-6xl font-black bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent mb-4">
                 LEADERBOARD
               </h2>
-              <p className="text-xl text-gray-400">Elite players dominating the arena</p>
+              <p className="text-xl text-gray-400">Elite players dominating the leaderboard</p>
             </div>
             <Link 
               to="/leaderboard" 
@@ -699,7 +642,7 @@ export default function LandingPage() {
                 </svg>
               </span>
               <div className="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-blue-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-              <div className="absolute -inset-2 bg-gradient-to-r from-purple-600 via-pink-600 to-blue-600 rounded-full blur-xl opacity-30 group-hover:opacity-50 transition-opacity duration-300" />
+              {/* Glow overlay removed */}
             </Link>
             
             <Link 
@@ -753,7 +696,7 @@ export default function LandingPage() {
         <svg className="w-8 h-8 mx-auto group-hover:-translate-y-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeWidth="3" strokeLinecap="round" strokeLinejoin="round" d="M5 15l7-7 7 7" />
         </svg>
-        <div className="absolute -inset-2 bg-gradient-to-r from-purple-500 to-pink-500 rounded-full blur opacity-20 group-hover:opacity-40 transition-opacity duration-300" />
+  {/* Glow overlay removed */}
       </button>
     </div>
   );

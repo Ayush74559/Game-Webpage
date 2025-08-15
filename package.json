@@ -4,7 +4,10 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
+  "dev": "vite",
+  "dev:server": "cd server && npm run dev",
+  "dev:client": "vite",
+  "dev:all": "concurrently -k \"npm:dev:server\" \"npm:dev:client\"",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
@@ -29,6 +32,7 @@
     "globals": "^16.3.0",
     "postcss": "^8.4.27",
     "tailwindcss": "^3.3.3",
-    "vite": "^7.1.2"
+  "vite": "^7.1.2",
+  "concurrently": "^8.2.2"
   }
 }

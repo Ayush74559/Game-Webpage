@@ -12,7 +12,7 @@ export default function Footer() {
                 <path d="M21 6H3c-1.1 0-2 .9-2 2v8c0 1.1.9 2 2 2h18c1.1 0 2-.9 2-2V8c0-1.1-.9-2-2-2zm0 10H3V8h18v8zM6 15h2v-2h2v-2H8V9H6v2H4v2h2z"/>
               </svg>
               <span className="ml-2 text-xl font-bold bg-gradient-to-r from-indigo-500 to-purple-600 bg-clip-text text-transparent">
-                GameZone
+                Code Battle Arena
               </span>
             </Link>
             <p className="mt-4 text-gray-400 text-sm">
@@ -99,7 +99,7 @@ export default function Footer() {
         {/* Bottom Section */}
         <div className="mt-8 border-t border-gray-800 pt-8">
           <p className="text-base text-gray-400 text-center">
-            © 2025 GameZone. All rights reserved.
+            © 2025 Code Battle Arena. All rights reserved.
           </p>
         </div>
       </div>
