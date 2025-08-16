@@ -10,6 +10,7 @@
   "dev:client": "vite",
   "dev:all": "concurrently -k \"npm:dev:server\" \"npm:dev:client\"",
     "build": "vite build",
+  "build:ifree": "vite build --base=/",
     "lint": "eslint .",
     "preview": "vite preview"
   },

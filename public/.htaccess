@@ -1,0 +1,11 @@
+# InfinityFree / Apache SPA fallback
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+  # If a real file or directory exists, serve it
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+  # Otherwise, serve index.html
+  RewriteRule ^ index.html [L]
+</IfModule>
