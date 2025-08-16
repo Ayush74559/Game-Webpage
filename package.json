@@ -3,6 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
+  "homepage": "https://Ayush74559.github.io/Game-Webpage/",
   "scripts": {
   "dev": "vite",
   "dev:server": "cd server && npm run dev",
