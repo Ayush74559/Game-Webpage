@@ -7,6 +7,9 @@ import Tournaments from './pages/Tournaments'
 import Leaderboard from './pages/Leaderboard'
 import Community from './pages/Community'
 import ProtectedRoute from './components/ProtectedRoute'
+import ProfileOverview from './pages/profile/ProfileOverview'
+import ProfileEdit from './pages/profile/ProfileEdit'
+import ProfileSecurity from './pages/profile/ProfileSecurity'
 
 function App() {
   return (
@@ -26,6 +29,32 @@ function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+
+        {/* Profile routes */}
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <ProfileOverview />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/edit"
+          element={
+            <ProtectedRoute>
+              <ProfileEdit />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile/security"
+          element={
+            <ProtectedRoute>
+              <ProfileSecurity />
             </ProtectedRoute>
           }
         />
