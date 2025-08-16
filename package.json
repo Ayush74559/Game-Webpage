@@ -11,6 +11,7 @@
   "dev:all": "concurrently -k \"npm:dev:server\" \"npm:dev:client\"",
     "build": "vite build",
   "build:ifree": "vite build --base=/",
+  "build:netlify": "vite build --base=/",
     "lint": "eslint .",
     "preview": "vite preview"
   },
