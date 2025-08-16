@@ -13,7 +13,7 @@ import ProfileSecurity from './pages/profile/ProfileSecurity'
 
 function App() {
   return (
-    <Router>
+  <Router basename={import.meta.env.BASE_URL}>
       <Routes>
         {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
